@@ -1,0 +1,12 @@
+__pycache__/valinorapp.cpython-36.pyc
+conformity_dialog.ui
+controllers/__pycache__/valinor_controler.cpython-36.pyc
+controllers/valinor_controler.py
+delimiter_dialog.ui
+main.py
+models/__pycache__/project_model.cpython-36.pyc
+models/project_model.py
+valinorapp.py
+valinormainwindow.ui
+views/__pycache__/valinormainwindow.cpython-36.pyc
+views/valinormainwindow.py
