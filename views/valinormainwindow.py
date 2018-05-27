@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import QMainWindow, QDesktopWidget
 from PyQt5 import uic
-from PyQt5.QtCore import QObject, pyqtSignal
-import json
+from PyQt5.QtCore import QObject, pyqtSignal, qDebug
+from views.conformity_window import ConformityWindow
+import json, sys
 
 class ValinorMainWindow(QMainWindow):
 
@@ -14,6 +15,7 @@ class ValinorMainWindow(QMainWindow):
 
         self.project = project
         self.init_UI()
+        self.conformity_window = None
 
 
     def init_UI(self):
@@ -65,6 +67,7 @@ class ValinorMainWindow(QMainWindow):
         self.ui.actionImport_Process.triggered.connect(self.import_process_model_button_clicked)
         self.ui.m_importCaseEventLogButton.clicked.connect(self.import_case_event_log_button_clicked)
         self.ui.m_importCaseAttributeButton.clicked.connect(self.import_case_attribute_log_button_clicked)
+        self.ui.m_conformityButton.clicked.connect(self.conformity_window_button_clicked)
 
     def import_process_model_button_clicked(self):
         self.signal_import_process.emit()
@@ -74,3 +77,9 @@ class ValinorMainWindow(QMainWindow):
 
     def import_case_attribute_log_button_clicked(self):
         self.signal_import_atribute_log.emit()
+
+    def conformity_window_button_clicked(self):
+        print("Clicked")
+        self.conformity_window = ConformityWindow(self,self.project)
+        self.conformity_window.show()
+

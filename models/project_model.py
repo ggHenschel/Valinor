@@ -1,6 +1,12 @@
+from PyQt5.QtCore import QObject, QSemaphore
+from helpers.conformity_helper import ReplayThread
 import json
-class ProjectModel():
+import sys
+from multiprocessing import cpu_count
+
+class ProjectModel(QObject):
     def __init__(self,name="New Project"):
+        super().__init__()
         self.name = name
         self.process_model = None
         self.case_attribute_model = []
@@ -37,3 +43,20 @@ class ProjectModel():
     def get_project_name(self):
         return self.name
 
+
+    def run_process_conformity(self,progress_bar,params=None):
+        results = []
+        n = cpu_count() -1
+        sem = QSemaphore(n)
+        th_list = []
+        for (case, eventSeq) in self.case_event_model.cases.items():
+            dummyCase = (case, eventSeq)
+            th = ReplayHelper(self.process_model,dummyCase,progress_bar,results,sem,params)
+            th_list.append(th)
+            th.start()
+            sem.acquire()
+
+        for th in th_list:
+            th.join()
+
+        print(results)
