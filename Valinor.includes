@@ -1,1 +1,11 @@
 .
+views
+resources
+models
+Data
+helpers
+views/__pycache__
+helpers/__pycache__
+controllers
+controllers/__pycache__
+models/__pycache__

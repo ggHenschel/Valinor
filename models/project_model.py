@@ -1,10 +1,15 @@
-from PyQt5.QtCore import QObject, QSemaphore
+from PyQt5.QtCore import QObject, QSemaphore, qDebug, pyqtSignal
 from helpers.conformity_helper import ReplayThread
 import json
+from models.case_atribute_model import CaseAttributeModel
 import sys
 from multiprocessing import cpu_count
 
 class ProjectModel(QObject):
+
+    signal_project_has_changed = pyqtSignal()
+    signal_conformity_algorithm_finished = pyqtSignal(str)
+
     def __init__(self,name="New Project"):
         super().__init__()
         self.name = name
@@ -46,17 +51,46 @@ class ProjectModel(QObject):
 
     def run_process_conformity(self,progress_bar,params=None):
         results = []
-        n = cpu_count() -1
-        sem = QSemaphore(n)
+        nc = cpu_count() -1
+        sem = QSemaphore(nc)
+        qDebug("CPU count "+str(nc+1))
+        parameters = json.loads(params)
+
         th_list = []
+        n = len(self.case_event_model.cases)
+        progress_bar.setMaximum(n)
+        qDebug("Process Conformity -- Run")
         for (case, eventSeq) in self.case_event_model.cases.items():
             dummyCase = (case, eventSeq)
-            th = ReplayHelper(self.process_model,dummyCase,progress_bar,results,sem,params)
+            th = ReplayThread(self.process_model,dummyCase,progress_bar,results,sem,params)
             th_list.append(th)
             th.start()
             sem.acquire()
 
         for th in th_list:
-            th.join()
+            if th.isFinished():
+                th_list.remove(th)
+            else:
+                sem.acquire()
 
-        print(results)
+        n = 0
+        nCase = CaseAttributeModel(name="Conformity Process Result")
+        nCase.add_legend(["ID","Conformity"])
+        string = ""
+        for item in results:
+            nCase.add_case(item[0],item[1:])
+            string += str(item[0])+" : "+str(item[1])+" - "+str(item[2])+"\n"
+            if not item[1]:
+                n+=1
+        if parameters["result_group"]=="append":
+            self.case_attribute_model.append(nCase)
+        elif parameters["result_group"]=="merge":
+            self.case_attribute_model[0].merge(nCase,[0])
+
+        self.signal_project_has_changed.emit()
+        self.signal_conformity_algorithm_finished.emit(string)
+
+        progress_bar.setValue(0)
+
+    def export_case_attribute_log(self,file_path,progress_dialog=None,keep_legend_bool=True,delimiter=";"):
+        self.case_attribute_model[0].export(file_path,progress_dialog,keep_legend_bool,delimiter)

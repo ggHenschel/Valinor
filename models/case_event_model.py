@@ -1,4 +1,5 @@
 from models.case_model import CaseModel
+from PyQt5.QtCore import qDebug, QObject
 import csv
 
 class CaseEventModel(CaseModel):
@@ -8,7 +9,7 @@ class CaseEventModel(CaseModel):
         self.n_cases = 0
         self.n_events = 0
 
-    def create_from_file(self,origin_path,delimiter=";"):
+    def create_from_file(self,origin_path,has_legend=False,delimiter=";"):
         self.name = str(origin_path).split("/")[-1]
         file = open(origin_path)
         read = csv.reader(file, delimiter=delimiter)
@@ -21,8 +22,13 @@ class CaseEventModel(CaseModel):
             rows.append(row)
 
         self.cases = dict()
+        if has_legend:
+            self.legend = rows[0]
+            n=1
+        else:
+            n=0
 
-        for row in rows[1:]:
+        for row in rows[n:]:
             case = str(row[0])
             evento = row[1]
             timestampe = row[2]
@@ -30,6 +36,7 @@ class CaseEventModel(CaseModel):
                 self.n_events+=1
                 nx = self.cases[case]
                 nx.append((evento, timestampe))
+
             else:
                 self.n_cases+=1
                 self.n_events+=1

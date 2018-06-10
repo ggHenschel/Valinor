@@ -1,5 +1,6 @@
 import networkx as nx
 from xml.dom import minidom
+import datetime
 
 class ProcessModel():
 
@@ -45,22 +46,24 @@ class ProcessModel():
             maxTime = int(edge.getElementsByTagName('Duration')[0].attributes['max'].value)
             self.Graph.add_edge(nodeS, nodeT, minTime=minTime, maxTime=maxTime, meanTime=meanTime)
 
-    def replay_case(case):
+    def replay_case(self, case):
         transformedEventsSeq = []
         auxitem = case[1][0]
         for n in range(1, len(case[1])):
             item = case[1][n]
-            # print(item[1])
-            t1 = datetime.datetime.strptime(item[1], "%Y-%m-%d %H:%M:%S.000")  # remoção dos milisegundos
-            # print(t1)
-            t2 = datetime.datetime.strptime(auxitem[1], "%Y-%m-%d %H:%M:%S.000")
+            try:
+                t1 = datetime.datetime.strptime(item[1][0:19], "%Y-%m-%d %H:%M:%S")  # remoção dos milisegundos
+                t2 = datetime.datetime.strptime(auxitem[1][0:19], "%Y-%m-%d %H:%M:%S")
+            except:
+                t1 = datetime.datetime.strptime(item[1][0:19], "%Y-%m-%dT%H:%M:%S")  # remoção dos milisegundos
+                t2 = datetime.datetime.strptime(auxitem[1][0:19], "%Y-%m-%dT%H:%M:%S")
             delta = t1 - t2
             # print(delta)
             vectorofEvent = (auxitem[0], item[0], delta)
             transformedEventsSeq.append(vectorofEvent)
             auxitem = item
 
-        # print(transformedEventsSeq)
+        # print(transformedEventsSeq)2018-04-06T03:51:18
 
         Approval = True
         Annotations = []
@@ -80,8 +83,8 @@ class ProcessModel():
 
                 if tempo > limite_sup or tempo < limite_inferior:
                     Approval = False
-                    an = "-- Reprovado por tempo Inadequado -- " + "Tempo entre eventos " + eventOrigem + " e " + eventDestino + " :" + str(
-                        tempo) + ". Tempo esperado em Média:" + str(meanTime)
+                    an = "-- Reprovado por tempo Inadequado -- " + "Tempo entre eventos " + eventOrigem + " e " + eventDestino + " : " + str(
+                        tempo) + ". Tempo esperado em Media: " + str(meanTime)
                     Annotations.append(an)
             else:
                 Approval = False
