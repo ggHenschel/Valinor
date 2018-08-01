@@ -57,32 +57,44 @@ class ValinorMainWindow(QMainWindow):
         if case_attribute_data["case_n"]== 0:
             case_attribute_string = "[No Case Attribute Data Loaded]"
             self.ui.m_classifierButton.setEnabled(False)
+            self.ui.actionClassifier_Algorithm.setEnabled(False)
             self.ui.m_clusteringButton.setEnabled(False)
+            self.ui.actionClustering_Algorithm.setEnabled(False)
         else:
             case_attribute_string = "["+case_attribute_data["case_log"]+" | "+case_attribute_data["n_cases"]+" cases | "+case_attribute_data["n_attributes"]+" attributes]"
             if int(case_attribute_data["case_n"])>1:
                 case_attribute_string += " [+"+str(int(case_attribute_data["case_n"])-1)+"]"
             self.handle_case_table_view()
             self.ui.m_classifierButton.setEnabled(True)
+            self.ui.actionClassifier_Algorithm.setEnabled(True)
             self.ui.m_clusteringButton.setEnabled(True)
+            self.ui.actionClustering_Algorithm.setEnabled(True)
 
         self.ui.m_processLabel.setText(process_string)
         self.ui.m_caseEventLogLabel.setText(case_event_string)
         self.ui.m_caseAtributteLabel.setText(case_attribute_string)
         if process_loaded and case_event_loaded:
             self.ui.m_conformityButton.setEnabled(True)
+            self.ui.actionConformity_Algorithm.setEnabled(True)
         else:
             self.ui.m_conformityButton.setEnabled(False)
+            self.ui.actionConformity_Algorithm.setEnabled(False)
 
     def set_connections(self):
         self.ui.m_importProcessModelButton.clicked.connect(self.import_process_model_button_clicked)
         self.ui.actionImport_Process.triggered.connect(self.import_process_model_button_clicked)
         self.ui.m_importCaseEventLogButton.clicked.connect(self.import_case_event_log_button_clicked)
+        self.ui.actionImport_Case_Event_Log.triggered.connect(self.import_case_event_log_button_clicked)
         self.ui.m_importCaseAttributeButton.clicked.connect(self.import_case_attribute_log_button_clicked)
+        self.ui.actionImport_Case_Atribute_Log.triggered.connect(self.import_case_attribute_log_button_clicked)
         self.ui.m_conformityButton.clicked.connect(self.conformity_window_button_clicked)
+        self.ui.actionConformity_Algorithm.triggered.connect(self.conformity_window_button_clicked)
         self.ui.m_exportCaseAtributeLogButton.clicked.connect(self.export_case_attribute_log_button_clicked)
+        self.ui.actionExport_Case_Atribute_Log.triggered.connect(self.export_case_attribute_log_button_clicked)
         self.ui.m_classifierButton.clicked.connect(self.classifier_window_button_cliked)
+        self.ui.actionClassifier_Algorithm.triggered.connect(self.classifier_window_button_cliked)
         self.ui.m_clusteringButton.clicked.connect(self.clustering_window_button_cliked)
+        self.ui.actionClustering_Algorithm.triggered.connect(self.clustering_window_button_cliked)
 
     def import_process_model_button_clicked(self):
         self.signal_import_process.emit()
@@ -117,9 +129,9 @@ class ValinorMainWindow(QMainWindow):
         self.table_view = CaseTableView(self.project.case_attribute_model[0])
         if self.has_case_attribute_tab:
             self.ui.m_tabWidget.removeTab(self.case_attribute_tab)
-            self.has_case_attribute_tab = True
 
         self.case_attribute_tab = self.ui.m_tabWidget.addTab(self.table_view,"Case Attribute")
+        self.has_case_attribute_tab = True
         self.table_view.show()
 
     @pyqtSlot()

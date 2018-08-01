@@ -245,9 +245,16 @@
     <property name="title">
      <string>Tools</string>
     </property>
+    <widget class="QMenu" name="menuDataMining_Algorithms">
+     <property name="title">
+      <string>DataMining Algorithms</string>
+     </property>
+     <addaction name="actionClassifier_Algorithm"/>
+     <addaction name="actionClustering_Algorithm"/>
+    </widget>
     <addaction name="actionConformity_Algorithm"/>
     <addaction name="separator"/>
-    <addaction name="actionDataMining_Algorithms"/>
+    <addaction name="menuDataMining_Algorithms"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
@@ -284,12 +291,14 @@
     <string>Conformity Algorithm</string>
    </property>
   </action>
-  <action name="actionDataMining_Algorithms">
+  <action name="actionClassifier_Algorithm">
    <property name="text">
-    <string>DataMining Algorithms</string>
+    <string>Classifier Algorithm</string>
    </property>
-   <property name="iconVisibleInMenu">
-    <bool>true</bool>
+  </action>
+  <action name="actionClustering_Algorithm">
+   <property name="text">
+    <string>Clustering Algorithm</string>
    </property>
   </action>
  </widget>
