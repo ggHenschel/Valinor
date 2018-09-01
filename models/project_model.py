@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QObject, QSemaphore, qDebug, pyqtSignal
+from PyQt5.QtCore import QObject, QSemaphore, qDebug, pyqtSignal, pyqtSlot
 from helpers.conformity_helper import ReplayThread
 import json
 from models.case_atribute_model import CaseAttributeModel
@@ -16,6 +16,7 @@ class ProjectModel(QObject):
         self.process_model = None
         self.case_attribute_model = []
         self.case_event_model = None
+        self.attached_progess_bar = None
 
     def get_process_details(self):
         if self.process_model == None:
@@ -53,8 +54,10 @@ class ProjectModel(QObject):
         results = []
         nc = cpu_count() -1
         sem = QSemaphore(nc)
+        bar_sem = QSemaphore(1)
         qDebug("CPU count "+str(nc+1))
         parameters = json.loads(params)
+        self.attached_progess_bar = progress_bar
 
         th_list = []
         n = len(self.case_event_model.cases)
@@ -62,35 +65,58 @@ class ProjectModel(QObject):
         qDebug("Process Conformity -- Run")
         for (case, eventSeq) in self.case_event_model.cases.items():
             dummyCase = (case, eventSeq)
-            th = ReplayThread(self.process_model,dummyCase,progress_bar,results,sem,params)
-            th_list.append(th)
+            qDebug("Start -- Case %s" % str(case))
+            th = ReplayThread(self.process_model,dummyCase,progress_bar,bar_sem,results,sem,parameters)
+            th.updateProgessbarSignal.connect(self.update_progress_bar_slot)
+            th_list.append((th,case))
             th.start()
             sem.acquire()
 
-        for th in th_list:
-            if th.isFinished():
-                th_list.remove(th)
+        qDebug("All threads Created")
+
+        for (th,case) in th_list:
+            if th and th.isFinished():
+                pass;
             else:
                 sem.acquire()
+            th.updateProgessbarSignal.disconnect(self.update_progress_bar_slot)
+
+        qDebug("All threads Finished")
 
         n = 0
         nCase = CaseAttributeModel(name="Conformity Process Result")
-        nCase.add_legend(["ID","Conformity"])
+        i_itens = [0]
+        if bool(parameters["types"]):
+            nCase.add_legend(["ID", "Conformity","NonConformity Type"])
+            i_itens.append(1)
+        else:
+            nCase.add_legend(["ID","Conformity"])
         string = ""
         for item in results:
             nCase.add_case(item[0],item[1:])
             string += str(item[0])+" : "+str(item[1])+" - "+str(item[2])+"\n"
-            if not item[1]:
-                n+=1
+
+        qDebug("Report Finished")
+
         if parameters["result_group"]=="append":
             self.case_attribute_model.append(nCase)
         elif parameters["result_group"]=="merge":
-            self.case_attribute_model[0].merge(nCase,[0])
+            self.case_attribute_model[0].merge(nCase,i_itens)
+
+        qDebug("Report Finished")
+
+        self.attached_progess_bar.setValue(0)
+        self.attached_progess_bar = None
 
         self.signal_project_has_changed.emit()
         self.signal_conformity_algorithm_finished.emit(string)
 
-        progress_bar.setValue(0)
+        qDebug("Signal Emitted")
 
     def export_case_attribute_log(self,file_path,progress_dialog=None,keep_legend_bool=True,delimiter=";"):
         self.case_attribute_model[0].export(file_path,progress_dialog,keep_legend_bool,delimiter)
+
+    @pyqtSlot(int)
+    def update_progress_bar_slot(self,value):
+        v = self.attached_progess_bar.value()+value
+        self.attached_progess_bar.setValue(v)

@@ -47,7 +47,7 @@ class ConformityWindow(QDialog):
             activity_conformity_option = str("not_selected")
 
         data["activity_conformity_option"] = activity_conformity_option
-
+        data["types"] = str(self.ui.m_conformity_type.isChecked())
         params = json.dumps(data)
         return params
 

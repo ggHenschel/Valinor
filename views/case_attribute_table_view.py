@@ -9,9 +9,13 @@ class CaseTableView(QTableWidget):
         self.case = case_attribute_log
         self.setColumnCount(len(self.case.legend))
         self.setRowCount(len(self.case.cases))
-        legend = QStringListModel(self.case.legend).stringList()
-        self.setHorizontalHeaderLabels(legend)
-        self.setSortingEnabled(False)
+        plegend = QStringListModel(self.case.legend).stringList()
+        flegend = []
+        for item in plegend:
+            item = item.replace(" ","\n")
+            flegend.append(item)
+        self.setHorizontalHeaderLabels(flegend)
+        self.setSortingEnabled(True)
         r=0
         for case, attr in self.case.cases.items():
             self.setItem(r,0,QTableWidgetItem(str(case)))
