@@ -4,6 +4,7 @@ from PyQt5.QtCore import QObject, pyqtSignal, qDebug, QTimer, pyqtSlot
 from views.conformity_window import ConformityWindow
 from views.algorithm_window import AlgorithmWindow
 from views.case_attribute_table_view import CaseTableView
+from views.classification_algorithm_window import ClassificationWindow
 import json, sys
 
 class ValinorMainWindow(QMainWindow):
@@ -110,7 +111,7 @@ class ValinorMainWindow(QMainWindow):
         self.conformity_window.show()
 
     def classifier_window_button_cliked(self):
-        self.classifier_algorithm_window = AlgorithmWindow(self, self.project)
+        self.classifier_algorithm_window = ClassificationWindow(self, self.project)
         self.classifier_algorithm_window.show()
 
     def clustering_window_button_cliked(self):

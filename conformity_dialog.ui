@@ -50,8 +50,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>157</width>
-          <height>465</height>
+          <width>125</width>
+          <height>522</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -111,6 +111,39 @@
           </widget>
          </item>
          <item>
+          <widget class="QGroupBox" name="TypeGroup">
+           <property name="title">
+            <string>Type Group</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <widget class="QToolButton" name="toolButton_5">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Type Group:&lt;/p&gt;&lt;p&gt;Conformity Type - This Option Control if Conformity Type will calculated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>?</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="m_conformity_type">
+              <property name="text">
+               <string>Conformity
+Types</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
           <widget class="QGroupBox" name="groupBox_2">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Activity Group&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This Options let you choose how activities influences Conformity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -147,6 +180,9 @@
          </item>
          <item>
           <widget class="QGroupBox" name="groupBox_3">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="title">
             <string>Transition Options</string>
            </property>

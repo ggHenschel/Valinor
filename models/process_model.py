@@ -1,6 +1,7 @@
 import networkx as nx
 from xml.dom import minidom
 import datetime
+from PyQt5.QtCore import qDebug
 
 class ProcessModel():
 
@@ -46,7 +47,8 @@ class ProcessModel():
             maxTime = int(edge.getElementsByTagName('Duration')[0].attributes['max'].value)
             self.Graph.add_edge(nodeS, nodeT, minTime=minTime, maxTime=maxTime, meanTime=meanTime)
 
-    def replay_case(self, case):
+    def replay_case(self, case, export_type=True):
+        #qDebug("%s Started" % case[0])
         transformedEventsSeq = []
         auxitem = case[1][0]
         for n in range(1, len(case[1])):
@@ -58,41 +60,61 @@ class ProcessModel():
                 t1 = datetime.datetime.strptime(item[1][0:19], "%Y-%m-%dT%H:%M:%S")  # remoção dos milisegundos
                 t2 = datetime.datetime.strptime(auxitem[1][0:19], "%Y-%m-%dT%H:%M:%S")
             delta = t1 - t2
-            # print(delta)
+
             vectorofEvent = (auxitem[0], item[0], delta)
             transformedEventsSeq.append(vectorofEvent)
             auxitem = item
 
-        # print(transformedEventsSeq)2018-04-06T03:51:18
-
         Approval = True
         Annotations = []
+        event_not_found_type = False;
+        non_existant_transistion = False;
+        irregular_time_transition = False;
+
+
 
         for (eventOrigem, eventDestino, tempo) in transformedEventsSeq:
-            if self.Graph.has_edge(eventOrigem, eventDestino):
-                meanTime = datetime.timedelta(milliseconds=self.Graph.get_edge_data(eventOrigem, eventDestino)['meanTime'])
+            if self.Graph.has_node(eventOrigem) and self.Graph.has_node(eventDestino) :
+                if self.Graph.has_edge(eventOrigem, eventDestino):
+                    meanTime = datetime.timedelta(milliseconds=self.Graph.get_edge_data(eventOrigem, eventDestino)['meanTime'])
 
-                try:  # Se houver os atributos max e min ele irá assumir
-                    limite_inferior = datetime.timedelta(
-                        milliseconds=self.Graph.get_edge_data(eventOrigem, eventDestino)['minTime'])
-                    limite_sup = datetime.timedelta(
-                        milliseconds=self.Graph.get_edge_data(eventOrigem, eventDestino)['maxTime'])
-                except:  # Se não houver os atributos usará os limites como 70% acima e abaixo
-                    limite_sup = 1.7 * meanTime  # Substituir por Tempo Maximo
-                    limite_inferior = 0.3 * meanTime  # Substituir por Tempo Minimo
+                    try:  # Se houver os atributos max e min ele irá assumir
+                        limite_inferior = datetime.timedelta(milliseconds=self.Graph.get_edge_data(eventOrigem, eventDestino)['minTime'])
+                        limite_sup = datetime.timedelta(milliseconds=self.Graph.get_edge_data(eventOrigem, eventDestino)['maxTime'])
+                    except:  # Se não houver os atributos usará os limites como 70% acima e abaixo
+                        limite_sup = 1.7 * meanTime  # Substituir por Tempo Maximo
+                        limite_inferior = 0.3 * meanTime  # Substituir por Tempo Minimo
 
-                if tempo > limite_sup or tempo < limite_inferior:
+                    if tempo > limite_sup or tempo < limite_inferior:
+                        Approval = False
+                        an = "-- Reprovado por tempo Inadequado -- " + "Tempo entre eventos " + eventOrigem + " e " + eventDestino + " : " + str(tempo) + ". Tempo esperado em Media: " + str(meanTime)
+                        irregular_time_transition = True
+                        Annotations.append(an)
+                else:
                     Approval = False
-                    an = "-- Reprovado por tempo Inadequado -- " + "Tempo entre eventos " + eventOrigem + " e " + eventDestino + " : " + str(
-                        tempo) + ". Tempo esperado em Media: " + str(meanTime)
+                    non_existant_transistion = True
+                    an = "-- Reprovado por sequencia Inadequada" + " -- Evento: " + eventOrigem + " procedido de " + eventDestino
                     Annotations.append(an)
             else:
                 Approval = False
-                an = "-- Reprovado por sequencia Inadequada" + " -- Evento: " + eventOrigem + " procedido de " + eventDestino
+                event_not_found_type = True
+                if self.Graph.has_node(eventOrigem):
+                    an = "-- Reprovado por evento Inexistente" + " -- Evento: " + eventOrigem
+                else:
+                    an = "-- Reprovado por evento Inexistente" + " -- Evento: " + eventDestino
                 Annotations.append(an)
 
-        CaseResolution = (case[0], Approval, Annotations)
+        type_sum = 0
+        if export_type:
+            if event_not_found_type:
+                type_sum +=1
+            if non_existant_transistion:
+                type_sum +=2
+            if irregular_time_transition:
+                type_sum +=4
 
+        CaseResolution = (case[0], Approval,type_sum, Annotations)
+        #qDebug("%s Finished" % case[0])
         return CaseResolution
 
     # def meanTime(self, start, end):

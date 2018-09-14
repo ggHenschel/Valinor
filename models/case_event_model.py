@@ -36,6 +36,7 @@ class CaseEventModel(CaseModel):
                 self.n_events+=1
                 nx = self.cases[case]
                 nx.append((evento, timestampe))
+                nx.sort(key=lambda x: x[1])
 
             else:
                 self.n_cases+=1
