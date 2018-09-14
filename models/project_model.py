@@ -9,6 +9,7 @@ class ProjectModel(QObject):
 
     signal_project_has_changed = pyqtSignal()
     signal_conformity_algorithm_finished = pyqtSignal(str)
+    signal_classification_algorithm_finished = pyqtSignal(str)
 
     def __init__(self,name="New Project"):
         super().__init__()
@@ -65,7 +66,7 @@ class ProjectModel(QObject):
         qDebug("Process Conformity -- Run")
         for (case, eventSeq) in self.case_event_model.cases.items():
             dummyCase = (case, eventSeq)
-            qDebug("Start -- Case %s" % str(case))
+            #qDebug("Start -- Case %s" % str(case))
             th = ReplayThread(self.process_model,dummyCase,progress_bar,bar_sem,results,sem,parameters)
             th.updateProgessbarSignal.connect(self.update_progress_bar_slot)
             th_list.append((th,case))
@@ -81,7 +82,6 @@ class ProjectModel(QObject):
                 sem.acquire()
             th.updateProgessbarSignal.disconnect(self.update_progress_bar_slot)
 
-        qDebug("All threads Finished")
 
         n = 0
         nCase = CaseAttributeModel(name="Conformity Process Result")
@@ -96,14 +96,11 @@ class ProjectModel(QObject):
             nCase.add_case(item[0],item[1:])
             string += str(item[0])+" : "+str(item[1])+" - "+str(item[2])+"\n"
 
-        qDebug("Report Finished")
 
         if parameters["result_group"]=="append":
             self.case_attribute_model.append(nCase)
         elif parameters["result_group"]=="merge":
             self.case_attribute_model[0].merge(nCase,i_itens)
-
-        qDebug("Report Finished")
 
         self.attached_progess_bar.setValue(0)
         self.attached_progess_bar = None
@@ -111,7 +108,27 @@ class ProjectModel(QObject):
         self.signal_project_has_changed.emit()
         self.signal_conformity_algorithm_finished.emit(string)
 
-        qDebug("Signal Emitted")
+    def run_classification_algorithm(self,progress_bar,params=None):
+        self.attached_progess_bar = progress_bar
+        self.attached_progess_bar.setMaximum(100)
+        self.attached_progess_bar.setValue(0)
+        cc = self.case_attribute_model[0]
+        (code, acc, dot_data, list) = cc.generate_tree(params)
+        self.attached_progess_bar.setValue(50)
+        #gera relatorio
+        string = "Params:"
+        for key, value in params.items():
+            string+="\t"+str(key)+" : "+str(value)+"\n"
+
+        string += "\n====================\nIgnored Attributes:\n"
+        for item in list:
+            string+="\t--"+self.case_attribute_model[0].legend[item+1]+"\n"
+        string+="\n====================\nTree\n"+code+"\n====================\nAcurracy: "+str(acc)
+
+        self.attached_progess_bar.setValue(100)
+        self.signal_classification_algorithm_finished.emit(string)
+        self.attached_progess_bar.setValue(0)
+        self.attached_progess_bar = None
 
     def export_case_attribute_log(self,file_path,progress_dialog=None,keep_legend_bool=True,delimiter=";"):
         self.case_attribute_model[0].export(file_path,progress_dialog,keep_legend_bool,delimiter)

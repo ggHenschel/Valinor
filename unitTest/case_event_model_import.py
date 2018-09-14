@@ -24,4 +24,7 @@ params = {"class_index": 169,
           }
 attribute_types = [1 for i in range(0,len(c.legend)-1)]
 attribute_types.append(3)
-c.generate_tree(attribute_types,params)
+print(c.define_attribute_type_list())
+#(code, acc, dot) = c.generate_tree(attribute_types,params)
+
+#print(code, acc, dot)

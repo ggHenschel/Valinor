@@ -20,7 +20,7 @@ class ReplayThread(QThread):
 
     def run(self):
         case = str(self.case[0])
-        qDebug("Finished -- Case %s" % case)
+        #qDebug("Finished -- Case %s" % case)
         result = self.process.replay_case(self.case,self.export_type)
         self.results.append(result)
         #self.bar_sem.acquire()

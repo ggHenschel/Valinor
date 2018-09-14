@@ -3,6 +3,7 @@ import csv
 from models.case_model import CaseModel
 from sklearn import tree, model_selection, metrics, preprocessing
 import numpy as np
+import pydotplus
 
 
 def tree_to_code(clf, feature_names, class_names):
@@ -91,27 +92,22 @@ class CaseAttributeModel(CaseModel):
 
 
 
-    def generate_tree(self,attribute_types,params):
+    def generate_tree(self,params):
         index_of_class = params["class_index"]
-        case_is_attribute = params["id_is_class"]
         perct_of_test = params["perct_of_test"]
         list_of_ignored_attributes = params["ignored_attributes"]
 
-
+        attribute_types = self.define_attribute_type_list()
         #Start Slicing
         data = []
         target = []
         list_of_strings = []
         feature_names = []
         class_name = []
-        if case_is_attribute:
-            feature_names.append("Case")
 
 
         for case, attr in self.cases.items():
             attributes = []
-            if case_is_attribute:
-                attributes.append(str(case))
             for i in range(0, len(attr[0])):
                 #Type Conversion
                 if not i in list_of_ignored_attributes:
@@ -124,17 +120,19 @@ class CaseAttributeModel(CaseModel):
                             if str(attr[0][i]) in list_of_strings:
                                 value = list_of_strings.index(str(attr[0][i]))
                             else:
-                                list_of_strings.append(attr[0][i])
+                                list_of_strings.append(str(attr[0][i]))
                                 value = list_of_strings.index(str(attr[0][i]))
                         else:
                             #AVISAR ABORT
                             list_of_ignored_attributes.append(i)
-                            return ;
+                            continue
 
                     if i != index_of_class:
                         attributes.append(value)
                     else:
                         target.append(value)
+            if len(attributes)+len(list_of_ignored_attributes)+2!=len(self.legend):
+                print("Failed")
             data.append(attributes)
 
         #legend
@@ -156,5 +154,33 @@ class CaseAttributeModel(CaseModel):
         clf.fit(X_train,y_train)
 
         code = tree_to_code(clf,feature_names,list_of_strings)
-        
 
+        #TODO: return report, code, and messages
+
+        dot_data = tree.export_graphviz(clf,out_file=None,feature_names=feature_names,class_names=list_of_strings,filled=True,rounded=True,special_characters=True)
+
+        y_pred = clf.predict(X_test)
+
+        accuracy = metrics.accuracy_score(y_test,y_pred)
+
+        return (code, accuracy, dot_data, list_of_ignored_attributes)
+
+    def define_attribute_type_list(self):
+        fline = next(iter(self.cases.values()))
+        list = []
+        type = "string"
+        for item in fline[0]:
+            try:
+                float(item)
+                list.append(1)
+            except:
+                if item!='True' and item!='False' and item!='true' and item!='false':
+                    list.append(3)
+                else:
+                    try:
+                        bool(item)
+                        list.append(0)
+                    except ValueError:
+                        list.append(3)
+
+        return list

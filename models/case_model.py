@@ -1,8 +1,10 @@
 import csv
+from PyQt5.QtCore import QObject
 
-class CaseModel():
+class CaseModel(QObject):
 
     def __init__(self,name='A Case has no name'):
+        super().__init__()
         self.cases = dict()
         self.name = name
         self.attribute_size = None
