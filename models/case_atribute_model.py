@@ -1,7 +1,7 @@
 from PyQt5.QtCore import qDebug
 import csv
 from models.case_model import CaseModel
-from sklearn import tree, model_selection, metrics, preprocessing
+from sklearn import tree, model_selection, metrics, preprocessing, cluster
 import numpy as np
 import pydotplus
 
@@ -34,6 +34,12 @@ def tree_to_code(clf, feature_names, class_names):
     return string
 
 class CaseAttributeModel(CaseModel):
+
+    def __init__(self,name='A Case has no name'):
+        super().__init__(name)
+        self.clf = None
+        self.cluster = None
+
     def details(self):
         name = self.name
         n_cases = len(self.cases)
@@ -123,7 +129,6 @@ class CaseAttributeModel(CaseModel):
                                 list_of_strings.append(str(attr[0][i]))
                                 value = list_of_strings.index(str(attr[0][i]))
                         else:
-                            #AVISAR ABORT
                             list_of_ignored_attributes.append(i)
                             continue
 
@@ -145,11 +150,16 @@ class CaseAttributeModel(CaseModel):
         #training data e test data
         X_train, X_test, y_train, y_test = model_selection.train_test_split(data,target, test_size = perct_of_test, random_state=100)
 
-        self.clf = tree.DecisionTreeClassifier(criterion = params["criterion"],splitter=params["splitter"],max_depth=params["max_depth"],
-                                          min_samples_split=params["min_sample_split"],min_samples_leaf=params["min_sample_leafs"],
-                                          min_weight_fraction_leaf = params["min_weight_fraction_leaf"],max_features=params["max_features"],
-                                          random_state = params["random_state"],max_leaf_nodes=params["max_leaf_nodes"],
-                                          min_impurity_split=params["min_impurity_split"])
+        self.clf = tree.DecisionTreeClassifier(criterion = params["criterion"],
+                                               splitter=params["splitter"],
+                                               max_depth=params["max_depth"],
+                                               min_samples_split=params["min_sample_split"],
+                                               min_samples_leaf=params["min_sample_leafs"],
+                                               min_weight_fraction_leaf = params["min_weight_fraction_leaf"],
+                                               max_features=params["max_features"],
+                                               random_state = params["random_state"],
+                                               max_leaf_nodes=params["max_leaf_nodes"],
+                                               min_impurity_split=params["min_impurity_split"])
 
         self.clf.fit(X_train,y_train)
 
@@ -165,7 +175,59 @@ class CaseAttributeModel(CaseModel):
 
         return (code, accuracy, dot_data, list_of_ignored_attributes)
 
-    def 
+    def clustering_algorithm(self,params):
+        data = []
+        attribute_types = self.define_attribute_type_list()
+        list_of_ignored_attributes = params["ignored_attributes"]
+        for case, attr in self.cases.items():
+            attributes = []
+            for i in range(0, len(attr[0])):
+                if not i in list_of_ignored_attributes:
+                    if attribute_types[i]== 0:
+                        value = bool(attr[0][i])
+                    elif (attribute_types[i]== 1 or attribute_types[i]== 2):
+                        value = attr[0][i]
+                    else:
+                        list_of_ignored_attributes.append(i)
+                        continue
+
+                    attributes.append(value)
+
+            data.append(attributes)
+
+
+        k_clusters = params["number_of_clusters"]
+        init = params["mode"]
+        n_init=params["n_init"]
+        max_iter=params["max_iter"]
+        tolerance=params["tolerance"]
+        if params["random_state"]:
+            rnd = np.random.random_integers(0,99999)
+        else:
+            rnd = None
+        algorithm = params["algorithm"]
+
+        self.clusters = cluster.KMeans(init=init,n_clusters=k_clusters,n_init=n_init,max_iter=max_iter,tol=tolerance,random_state=rnd,algorithm=algorithm)
+
+        self.clusters.fit(data)
+
+        centers = self.clusters.cluster_centers_
+
+        return_cluster = []
+        for key, item in self.cases.items():
+            datan = item[0].copy()
+            dataf = []
+            for i in list_of_ignored_attributes[::-1]:
+                datan.pop(i)
+            for value in datan:
+                try:
+                    dataf.append(float(value))
+                except:
+                    dataf.append(bool(value))
+            dataf = np.array(dataf)
+            return_cluster.append((key,self.clusters.predict([dataf])))
+
+        return (centers,return_cluster)
 
     def define_attribute_type_list(self):
         fline = next(iter(self.cases.values()))
