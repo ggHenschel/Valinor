@@ -145,25 +145,27 @@ class CaseAttributeModel(CaseModel):
         #training data e test data
         X_train, X_test, y_train, y_test = model_selection.train_test_split(data,target, test_size = perct_of_test, random_state=100)
 
-        clf = tree.DecisionTreeClassifier(criterion = params["criterion"],splitter=params["splitter"],max_depth=params["max_depth"],
+        self.clf = tree.DecisionTreeClassifier(criterion = params["criterion"],splitter=params["splitter"],max_depth=params["max_depth"],
                                           min_samples_split=params["min_sample_split"],min_samples_leaf=params["min_sample_leafs"],
                                           min_weight_fraction_leaf = params["min_weight_fraction_leaf"],max_features=params["max_features"],
                                           random_state = params["random_state"],max_leaf_nodes=params["max_leaf_nodes"],
                                           min_impurity_split=params["min_impurity_split"])
 
-        clf.fit(X_train,y_train)
+        self.clf.fit(X_train,y_train)
 
-        code = tree_to_code(clf,feature_names,list_of_strings)
+        code = tree_to_code(self.clf,feature_names,list_of_strings)
 
         #TODO: return report, code, and messages
 
-        dot_data = tree.export_graphviz(clf,out_file=None,feature_names=feature_names,class_names=list_of_strings,filled=True,rounded=True,special_characters=True)
+        dot_data = tree.export_graphviz(self.clf,out_file=None,feature_names=feature_names,class_names=list_of_strings,filled=True,rounded=True,special_characters=True)
 
-        y_pred = clf.predict(X_test)
+        y_pred = self.clf.predict(X_test)
 
         accuracy = metrics.accuracy_score(y_test,y_pred)
 
         return (code, accuracy, dot_data, list_of_ignored_attributes)
+
+    def 
 
     def define_attribute_type_list(self):
         fline = next(iter(self.cases.values()))
