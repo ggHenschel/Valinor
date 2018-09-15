@@ -33,6 +33,33 @@ def tree_to_code(clf, feature_names, class_names):
 
     return string
 
+def tree_to_j48(clf, feature_names, class_names):
+    tree_ = clf.tree_
+    string = ""
+    feature_name = [
+        feature_names[i] if i != tree._tree.TREE_UNDEFINED else "undefined!"
+        for i in tree_.feature
+    ]
+    string+="Output ({}):\n".format(", ".join(feature_names))
+
+    def recurse(node, depth):
+        indent = "|    " * depth
+        stri = ""
+        if tree_.feature[node] != tree._tree.TREE_UNDEFINED:
+            name = feature_name[node]
+            threshold = tree_.threshold[node]
+            stri +="\n{} {} <= {}".format(indent, name, threshold)
+            stri +=recurse(tree_.children_left[node], depth + 1)
+            stri +="\n{} {} > {}".format(indent, name, threshold)
+            stri +=recurse(tree_.children_right[node], depth + 1)
+        else:
+            stri +=" : {} ({})".format(class_names[np.argmax(tree_.value[node][0])],tree_.weighted_n_node_samples[node])
+        return stri
+
+    string+=recurse(0, 0)
+
+    return string
+
 class CaseAttributeModel(CaseModel):
 
     def __init__(self,name='A Case has no name'):
@@ -163,9 +190,10 @@ class CaseAttributeModel(CaseModel):
 
         self.clf.fit(X_train,y_train)
 
-        code = tree_to_code(self.clf,feature_names,list_of_strings)
-
-        #TODO: return report, code, and messages
+        if params["code_type"]=="python":
+            code = tree_to_code(self.clf,feature_names,list_of_strings)
+        else:
+            code = tree_to_j48(self.clf, feature_names, list_of_strings)
 
         dot_data = tree.export_graphviz(self.clf,out_file=None,feature_names=feature_names,class_names=list_of_strings,filled=True,rounded=True,special_characters=True)
 

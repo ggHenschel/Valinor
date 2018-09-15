@@ -32,7 +32,8 @@ class ClassificationWindow(AlgorithmWindow):
                   "random_state": None,
                   "max_leaf_nodes": None,
                   "min_impurity_split": None,
-                  "ignored_attributes": []
+                  "ignored_attributes": [],
+                  "code_type": "j48"
                   }
         data["class_index"]=self.ui.m_cl_class.currentIndex()
         if self.ui.m_rg_entropy.isChecked():
