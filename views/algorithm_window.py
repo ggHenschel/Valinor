@@ -17,7 +17,7 @@ class AlgorithmWindow(QDialog):
         self.setup_connections()
 
     def initUI(self):
-        self.ui = uic.loadUi('algorithm_dialog.ui',self)
+        self.ui = uic.loadUi('E:/Valinor/algorithm_dialog.ui',self)
 
     def setup_connections(self):
         self.ui.m_close_button.clicked.connect(self.cancel_button_clicked)

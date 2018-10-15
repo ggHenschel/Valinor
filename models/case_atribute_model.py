@@ -3,7 +3,6 @@ import csv
 from models.case_model import CaseModel
 from sklearn import tree, model_selection, metrics, preprocessing, cluster
 import numpy as np
-import pydotplus
 
 
 def tree_to_code(clf, feature_names, class_names):
@@ -99,13 +98,13 @@ class CaseAttributeModel(CaseModel):
 
     def merge(self,newModel,list_of_itens):
         ilegend = newModel.legend
-        for i in list_of_itens:
-            self.legend.append(ilegend[i+1])
+        for i in list_of_itens[1:]:
+            self.legend.extend(ilegend[i])
 
         for case, attr in self.cases.items():
             iitems = newModel.cases[case]
-            for i in list_of_itens:
-                attr[0].append(iitems[i])
+            for i in list_of_itens[1:]:
+                attr[0].append(iitems[i-1])
 
     def export(self,file_path,progress_dialog=None,keep_legend_bool=True,delimiter=";"):
         with open(file_path,mode='w') as file:

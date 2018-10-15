@@ -25,13 +25,13 @@ class ValinorMainWindow(QMainWindow):
 
 
     def init_UI(self):
-        self.ui = uic.loadUi('valinormainwindow.ui',self)
+        self.ui = uic.loadUi('E:/Valinor/valinormainwindow.ui',self)
         self.setWindowTitle('Valinor App - '+str(self.project.get_project_name()))
         self.timer = QTimer()
         self.init_status_bar()
         self.project_updated()
         self.set_connections()
-        self.ui.m_about_textBrowser.setHtml(open("resources/about.html").read())
+        self.ui.m_about_textBrowser.setHtml(open("E:/Valinor/resources/about.html").read())
 
 
     def init_status_bar(self):
