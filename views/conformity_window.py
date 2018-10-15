@@ -14,7 +14,7 @@ class ConformityWindow(QDialog):
         self.setup_connections()
 
     def initUI(self):
-        self.ui = uic.loadUi('conformity_dialog.ui',self)
+        self.ui = uic.loadUi('E:/Valinor/conformity_dialog.ui',self)
 
     def setup_connections(self):
         self.ui.m_close_button.clicked.connect(self.cancel_button_clicked)
@@ -27,9 +27,10 @@ class ConformityWindow(QDialog):
         qDebug("Run Algorithm Button Clicked")
         self.progress_dialog = self.ui.m_progressBar
         params = self.generate_params()
-        self.th = Thread(target=self.project.run_clustering_algorithm,args=[self.progress_dialog,params])
+        self.th = Thread(target=self.project.run_process_conformity,args=[self.progress_dialog,params])
         self.th.start()
         self.ui.m_run_algorithm_button.setEnabled(False)
+        self.project.signal_update_bar.connect(self.slot_update_bar)
         self.project.signal_conformity_algorithm_finished.connect(self.slot_project_has_finished)
 
     def generate_params(self):
@@ -37,24 +38,29 @@ class ConformityWindow(QDialog):
         result_group = str("show_only")
         if self.ui.m_rg_merge.isChecked():
             result_group = str("merge")
-        elif self.ui.m_rg_append.isChecked():
-            result_group = str("append")
 
         data["result_group"] = result_group
 
-        if self.ui.m_ag_nonconforme_checkbox.isChecked():
-            activity_conformity_option = str("non_conform")
-        else:
-            activity_conformity_option = str("not_selected")
+        if self.ui.m_rb_ann_add.isChecked():
+            data["notes"] = str("add")
+        elif self.ui.m_rb_ann_show.isChecked():
+            data["notes"] = str("show")
+        elif self.ui.m_rb_ann_ignore.isChecked():
+            data["notes"] = str("ignore")
 
-        data["activity_conformity_option"] = activity_conformity_option
-        data["types"] = str(self.ui.m_conformity_type.isChecked())
-        params = json.dumps(data)
+        data["types"] = self.ui.m_conformity_type.isChecked()
+        data["conformity"] = self.ui.m_conformity_export.isChecked()
+        params = data
         return params
 
 
     @pyqtSlot(str)
     def slot_project_has_finished(self,jdata):
         self.ui.m_textBrowser.setPlainText(jdata)
+        self.project.signal_update_bar.disconnect(self.slot_update_bar)
         self.project.signal_conformity_algorithm_finished.disconnect(self.slot_project_has_finished)
         self.ui.m_run_algorithm_button.setEnabled(True)
+
+    @pyqtSlot(int)
+    def slot_update_bar(self,v):
+        self.progress_dialog.setValue(v)

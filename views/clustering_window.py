@@ -10,7 +10,7 @@ class ClusteringWindow(AlgorithmWindow):
 
 
     def initUI(self):
-        self.ui = uic.loadUi('clustering_dialog.ui',self)
+        self.ui = uic.loadUi('E:/Valinor/clustering_dialog.ui',self)
 
     def run_algorithm_button_clicked(self):
         self.progress_dialog = self.ui.m_progressBar
@@ -18,6 +18,7 @@ class ClusteringWindow(AlgorithmWindow):
         self.th = Thread(target=self.project.run_clustering_algorithm,args=[self.progress_dialog,params])
         self.th.start()
         self.ui.m_run_algorithm_button.setEnabled(False)
+        self.project.signal_update_bar.connect(self.slot_update_bar)
         self.project.signal_classification_algorithm_finished.connect(self.slot_project_has_finished)
 
     def generate_params(self):
@@ -52,6 +53,10 @@ class ClusteringWindow(AlgorithmWindow):
     @pyqtSlot(str)
     def slot_project_has_finished(self, jdata):
         self.ui.m_textBrowser.setPlainText(jdata)
+        self.project.signal_update_bar.disconnect(self.slot_update_bar)
         self.project.signal_classification_algorithm_finished.disconnect(self.slot_project_has_finished)
         self.ui.m_run_algorithm_button.setEnabled(True)
 
+    @pyqtSlot(int)
+    def slot_update_bar(self,v):
+        self.progress_dialog.setValue(v)

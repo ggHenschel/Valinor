@@ -10,6 +10,7 @@ class ProjectModel(QObject):
     signal_project_has_changed = pyqtSignal()
     signal_conformity_algorithm_finished = pyqtSignal(str)
     signal_classification_algorithm_finished = pyqtSignal(str)
+    signal_update_bar = pyqtSignal(int)
 
     def __init__(self,name="New Project"):
         super().__init__()
@@ -57,7 +58,7 @@ class ProjectModel(QObject):
         sem = QSemaphore(nc)
         bar_sem = QSemaphore(1)
         qDebug("CPU count "+str(nc+1))
-        parameters = json.loads(params)
+        parameters = params
         self.attached_progess_bar = progress_bar
 
         th_list = []
@@ -85,21 +86,42 @@ class ProjectModel(QObject):
 
         n = 0
         nCase = CaseAttributeModel(name="Conformity Process Result")
-        i_itens = [0]
+        i_itens = []
+        legend = ["ID"]
+        if bool(parameters["conformity"]):
+            legend.append(["Conformity"])
         if bool(parameters["types"]):
-            nCase.add_legend(["ID", "Conformity","NonConformity Type"])
-            i_itens.append(1)
-        else:
-            nCase.add_legend(["ID","Conformity"])
-        string = ""
+            legend.append(["NonConformity Type"])
+        if parameters["notes"]=="add":
+            legend.append(["Notes"])
+
+        for i in range(len(legend)):
+            i_itens.append(i)
+        nCase.add_legend(legend)
+
+        string = "Params:"
+        for key, value in parameters.items():
+            string += "\t" + str(key) + " : " + str(value) + "\n"
+
+        string += "==============Report===========\n"
         for item in results:
-            nCase.add_case(item[0],item[1:])
-            string += str(item[0])+" : "+str(item[1])+" - "+str(item[2])+"\n"
+            liste = []
+            string += str(item[0]) + " : "
+            if parameters["conformity"]:
+                liste.append(item[1])
+                string += str(item[1])+"\t"
+            if parameters["types"]:
+                liste.append(item[2])
+                string += str(item[2])+"\t"
+            if parameters["notes"]=="add":
+                liste.append(str(item[3]))
+            if parameters["notes"]!="ignore":
+                string += str(item[3]) + "\t"
+            nCase.add_case(item[0], liste)
+            string+="\n"
 
 
-        if parameters["result_group"]=="append":
-            self.case_attribute_model.append(nCase)
-        elif parameters["result_group"]=="merge":
+        if parameters["result_group"] == "merge":
             self.case_attribute_model[0].merge(nCase,i_itens)
 
         self.attached_progess_bar.setValue(0)
@@ -134,32 +156,33 @@ class ProjectModel(QObject):
         self.attached_progess_bar = progress_bar
         self.attached_progess_bar.setMaximum(100)
         cc = self.case_attribute_model[0]
+        self.signal_update_bar.emit(10)
         (centers, per_item) = cc.clustering_algorithm(params)
-        self.attached_progess_bar.setValue(70)
+        self.signal_update_bar.emit(75)
         # gera relatorio
         string = "Params:"
         for key, value in params.items():
             string += "\t" + str(key) + " : " + str(value) + "\n"
-        self.attached_progess_bar.setValue(75)
 
-        string += "\n====================\nIgnored Attributes:\n"
+        self.signal_update_bar.emit(80)
+
+        string += "\n============\nIgnored Attributes:\n"
         for item in params["ignored_attributes"]:
             string += "\t--" + self.case_attribute_model[0].legend[item + 1] + "\n"
-        string += "\n====================\nClusters==================================\n"
-        self.attached_progess_bar.setValue(80)
+        string += "\n============\nClusters============\n"
+        self.signal_update_bar.emit(85)
         cc=0
         for center in centers:
             string +=" "+str(cc)+" - "+str(center)+"\n"
             cc+=1
-        string += "\n===============\nCluster per Case:==============================\nCase\t-- Predicted Cluster\n"
+        string += "\n==========\nCluster per Case:==========\nCase\t-- Predicted Cluster\n"
         string += format("%14s -- Predicted Cluster\n" % "Case")
-        self.attached_progess_bar.setValue(90)
+        self.signal_update_bar.emit(90)
         for item in per_item:
             string += format("%14s -- %4d\n" % (str(item[0]), int(item[1])))
 
-        self.attached_progess_bar.setValue(100)
+        self.signal_update_bar.emit(100)
         self.signal_classification_algorithm_finished.emit(string)
-        self.attached_progess_bar.setValue(0)
         self.attached_progess_bar = None
 
     def export_case_attribute_log(self,file_path,progress_dialog=None,keep_legend_bool=True,delimiter=";"):
@@ -168,4 +191,4 @@ class ProjectModel(QObject):
     @pyqtSlot(int)
     def update_progress_bar_slot(self,value):
         v = self.attached_progess_bar.value()+value
-        self.attached_progess_bar.setValue(v)
+        self.signal_update_bar.emit(v)

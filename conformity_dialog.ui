@@ -50,8 +50,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>125</width>
-          <height>522</height>
+          <width>142</width>
+          <height>349</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -85,16 +85,6 @@
              </widget>
             </item>
             <item>
-             <widget class="QRadioButton" name="m_rg_append">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Append&lt;/span&gt;&lt;/p&gt;&lt;p&gt;A new Case Attribute model will be Created and Added to the project.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="text">
-               <string>Append</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QRadioButton" name="m_rg_show">
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Show Only&lt;/span&gt;&lt;/p&gt;&lt;p&gt;No Case Attribute Log will be created, but results will be shown on the Side Text&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -117,23 +107,20 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
-             <widget class="QToolButton" name="toolButton_5">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Type Group:&lt;/p&gt;&lt;p&gt;Conformity Type - This Option Control if Conformity Type will calculated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="text">
-               <string>?</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QCheckBox" name="m_conformity_type">
               <property name="text">
                <string>Conformity
 Types</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="m_conformity_export">
+              <property name="text">
+               <string>Conformity</string>
               </property>
               <property name="checked">
                <bool>true</bool>
@@ -145,111 +132,31 @@ Types</string>
          </item>
          <item>
           <widget class="QGroupBox" name="groupBox_2">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Activity Group&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This Options let you choose how activities influences Conformity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
            <property name="title">
-            <string>Activity Group</string>
+            <string>Anotations</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_8">
+           <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
-             <widget class="QToolButton" name="toolButton_2">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
+             <widget class="QRadioButton" name="m_rb_ann_add">
               <property name="text">
-               <string>?</string>
+               <string>Add To Case</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="m_ag_nonconforme_checkbox">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;NonConform&lt;/span&gt;&lt;/p&gt;&lt;p&gt;If Checked, cases that have non expected activities will have a NonConform status.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
+             <widget class="QRadioButton" name="m_rb_ann_show">
               <property name="text">
-               <string>NonConform</string>
+               <string>Show Only</string>
               </property>
               <property name="checked">
                <bool>true</bool>
               </property>
              </widget>
             </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_3">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="title">
-            <string>Transition Options</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_9">
             <item>
-             <widget class="QToolButton" name="toolButton_3">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Transition Options&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This group of options changes how the algorithm handles transitions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
+             <widget class="QRadioButton" name="m_rb_ann_ignore">
               <property name="text">
-               <string>?</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="checkBox">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Non Linear Process&lt;/span&gt;&lt;/p&gt;&lt;p&gt;If Check it states that the process is non Linear. Non Linear process can have multiple corrects paths, but the time to for each item to happen in relation to each other is Still relevant.&lt;/p&gt;&lt;p&gt;On check, new options will be enable.&lt;/p&gt;&lt;p&gt;(Enabling this will options will increase the processing time by a considerable amount).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="text">
-               <string>NonLinear</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="groupBox_4">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="title">
-            <string>NonLinear Options</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_10">
-            <item>
-             <widget class="QToolButton" name="toolButton_4">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Non Linear Process Options&lt;/span&gt;&lt;/p&gt;&lt;p&gt;If Check it states that the process is non Linear. Non Linear process can have multiple corrects paths, but the time to for each item to happen in relation to each other is Still relevant.&lt;/p&gt;&lt;p&gt;Transitions can be handle in 3 ways:&lt;/p&gt;&lt;p&gt;- Shortest Path Only;&lt;/p&gt;&lt;p&gt;- Longest Path Only;&lt;/p&gt;&lt;p&gt;- Both;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="text">
-               <string>?</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton">
-              <property name="text">
-               <string>Short Path</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton_2">
-              <property name="text">
-               <string>Long Path</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton_3">
-              <property name="text">
-               <string>Both</string>
+               <string>Ignore</string>
               </property>
              </widget>
             </item>
