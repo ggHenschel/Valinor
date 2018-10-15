@@ -130,6 +130,38 @@ class ProjectModel(QObject):
         self.attached_progess_bar.setValue(0)
         self.attached_progess_bar = None
 
+    def run_clustering_algorithm(self,progress_bar,params=None):
+        self.attached_progess_bar = progress_bar
+        self.attached_progess_bar.setMaximum(100)
+        cc = self.case_attribute_model[0]
+        (centers, per_item) = cc.clustering_algorithm(params)
+        self.attached_progess_bar.setValue(70)
+        # gera relatorio
+        string = "Params:"
+        for key, value in params.items():
+            string += "\t" + str(key) + " : " + str(value) + "\n"
+        self.attached_progess_bar.setValue(75)
+
+        string += "\n====================\nIgnored Attributes:\n"
+        for item in params["ignored_attributes"]:
+            string += "\t--" + self.case_attribute_model[0].legend[item + 1] + "\n"
+        string += "\n====================\nClusters==================================\n"
+        self.attached_progess_bar.setValue(80)
+        cc=0
+        for center in centers:
+            string +=" "+str(cc)+" - "+str(center)+"\n"
+            cc+=1
+        string += "\n===============\nCluster per Case:==============================\nCase\t-- Predicted Cluster\n"
+        string += format("%14s -- Predicted Cluster\n" % "Case")
+        self.attached_progess_bar.setValue(90)
+        for item in per_item:
+            string += format("%14s -- %4d\n" % (str(item[0]), int(item[1])))
+
+        self.attached_progess_bar.setValue(100)
+        self.signal_classification_algorithm_finished.emit(string)
+        self.attached_progess_bar.setValue(0)
+        self.attached_progess_bar = None
+
     def export_case_attribute_log(self,file_path,progress_dialog=None,keep_legend_bool=True,delimiter=";"):
         self.case_attribute_model[0].export(file_path,progress_dialog,keep_legend_bool,delimiter)
 

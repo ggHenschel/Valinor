@@ -27,7 +27,7 @@ class ConformityWindow(QDialog):
         qDebug("Run Algorithm Button Clicked")
         self.progress_dialog = self.ui.m_progressBar
         params = self.generate_params()
-        self.th = Thread(target=self.project.run_process_conformity,args=[self.progress_dialog,params])
+        self.th = Thread(target=self.project.run_clustering_algorithm,args=[self.progress_dialog,params])
         self.th.start()
         self.ui.m_run_algorithm_button.setEnabled(False)
         self.project.signal_conformity_algorithm_finished.connect(self.slot_project_has_finished)

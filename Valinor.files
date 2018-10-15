@@ -1,6 +1,7 @@
 Save Log.csv
 algorithm_dialog.ui
 classification_algorithm_dialog.ui
+clustering_dialog.ui
 conformity_dialog.ui
 main.py
 valinorapp.py

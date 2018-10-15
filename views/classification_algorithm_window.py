@@ -16,7 +16,6 @@ class ClassificationWindow(AlgorithmWindow):
         self.ui.m_cl_class.setCurrentIndex(len(self.project.case_attribute_model[0].legend[1:])-1)
 
     def run_algorithm_button_clicked(self):
-        qDebug("Run Algorithm Button Clicked")
         self.progress_dialog = self.ui.m_progressBar
         params = self.generate_params()
         self.th = Thread(target=self.project.run_classification_algorithm,args=[self.progress_dialog,params])
