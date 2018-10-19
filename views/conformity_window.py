@@ -3,6 +3,7 @@ from PyQt5 import uic
 from PyQt5.QtCore import QObject, pyqtSignal, qDebug, pyqtSlot
 from threading import Thread
 import json
+from helpers.dev_utils import resource_path
 
 class ConformityWindow(QDialog):
 
@@ -14,7 +15,7 @@ class ConformityWindow(QDialog):
         self.setup_connections()
 
     def initUI(self):
-        self.ui = uic.loadUi('E:/Valinor/conformity_dialog.ui',self)
+        self.ui = uic.loadUi(resource_path('conformity_dialog.ui'),self)
 
     def setup_connections(self):
         self.ui.m_close_button.clicked.connect(self.cancel_button_clicked)

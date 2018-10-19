@@ -5,12 +5,13 @@ from PyQt5.QtCore import QObject, pyqtSignal, qDebug, pyqtSlot,QTimer
 from threading import Thread
 from time import sleep
 import json
+from helpers.dev_utils import resource_path
 
 class ClassificationWindow(AlgorithmWindow):
 
 
     def initUI(self):
-        self.ui = uic.loadUi('E:/Valinor/classification_algorithm_dialog.ui',self)
+        self.ui = uic.loadUi(resource_path('classification_algorithm_dialog.ui'),self)
         self.ui.m_cl_class.clear()
         self.ui.m_cl_class.addItems(self.project.case_attribute_model[0].legend[1:])
         self.ui.m_cl_class.setCurrentIndex(len(self.project.case_attribute_model[0].legend[1:])-1)

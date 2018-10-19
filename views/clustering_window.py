@@ -5,12 +5,13 @@ from PyQt5.QtCore import QObject, pyqtSignal, qDebug, pyqtSlot, QTimer
 from threading import Thread
 from time import sleep
 import json
+from helpers.dev_utils import resource_path
 
 class ClusteringWindow(AlgorithmWindow):
 
 
     def initUI(self):
-        self.ui = uic.loadUi('E:/Valinor/clustering_dialog.ui',self)
+        self.ui = uic.loadUi(resource_path('clustering_dialog.ui'),self)
 
     def run_algorithm_button_clicked(self):
         self.progress_dialog = self.ui.m_progressBar

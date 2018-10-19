@@ -7,6 +7,7 @@ from views.case_attribute_table_view import CaseTableView
 from views.classification_algorithm_window import ClassificationWindow
 from views.clustering_window import ClusteringWindow
 import json, sys
+from helpers.dev_utils import resource_path
 
 class ValinorMainWindow(QMainWindow):
 
@@ -25,13 +26,13 @@ class ValinorMainWindow(QMainWindow):
 
 
     def init_UI(self):
-        self.ui = uic.loadUi('E:/Valinor/valinormainwindow.ui',self)
+        self.ui = uic.loadUi(resource_path('valinormainwindow.ui'),self)
         self.setWindowTitle('Valinor App - '+str(self.project.get_project_name()))
         self.timer = QTimer()
         self.init_status_bar()
         self.project_updated()
         self.set_connections()
-        self.ui.m_about_textBrowser.setHtml(open("E:/Valinor/resources/about.html").read())
+        self.ui.m_about_textBrowser.setHtml(open(resource_path("resources/about.html")).read())
 
 
     def init_status_bar(self):
