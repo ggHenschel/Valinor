@@ -4,6 +4,7 @@ from PyQt5.QtCore import QObject, pyqtSignal, qDebug, pyqtSlot
 from threading import Thread
 import json
 from helpers.dev_utils import resource_path
+from helpers.export_helper import ExportHelper
 
 class ConformityWindow(QDialog):
 
@@ -20,6 +21,7 @@ class ConformityWindow(QDialog):
     def setup_connections(self):
         self.ui.m_close_button.clicked.connect(self.cancel_button_clicked)
         self.ui.m_run_algorithm_button.clicked.connect(self.run_algorithm_button_clicked)
+        self.ui.m_exportResultButton.clicked.connect(self.slot_export_result_log)
 
     def cancel_button_clicked(self):
         self.close()
@@ -33,6 +35,7 @@ class ConformityWindow(QDialog):
         self.ui.m_run_algorithm_button.setEnabled(False)
         self.project.signal_update_bar.connect(self.slot_update_bar)
         self.project.signal_conformity_algorithm_finished.connect(self.slot_project_has_finished)
+        self.ui.m_exportResultButton.setEnabled(False)
 
     def generate_params(self):
         data = dict()
@@ -61,7 +64,12 @@ class ConformityWindow(QDialog):
         self.project.signal_update_bar.disconnect(self.slot_update_bar)
         self.project.signal_conformity_algorithm_finished.disconnect(self.slot_project_has_finished)
         self.ui.m_run_algorithm_button.setEnabled(True)
+        self.ui.m_exportResultButton.setEnabled(True)
 
     @pyqtSlot(int)
     def slot_update_bar(self,v):
         self.progress_dialog.setValue(v)
+
+    @pyqtSlot()
+    def slot_export_result_log(self):
+        ExportHelper.export_result_log(self.ui.m_textBrowser.toPlainText(),"conformity")

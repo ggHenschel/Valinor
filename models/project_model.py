@@ -173,9 +173,9 @@ class ProjectModel(QObject):
         self.signal_update_bar.emit(85)
         cc=0
         for center in centers:
-            string +=" "+str(cc)+" - "+str(center)+"\n"
+            string +=" "+str(cc)+" - "+str([format("%.5f"% x ) for x in center])+"\n"
             cc+=1
-        string += "\n==========\nCluster per Case:==========\nCase\t-- Predicted Cluster\n"
+        string += "\n==========\nCluster per Case:==========\n"
         string += format("%14s -- Predicted Cluster\n" % "Case")
         self.signal_update_bar.emit(90)
         for item in per_item:

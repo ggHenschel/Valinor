@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5 import uic
 from PyQt5.QtCore import QObject, pyqtSignal, qDebug, pyqtSlot,QTimer
 from threading import Thread
+from helpers.export_helper import ExportHelper
 from time import sleep
 import json
 
@@ -22,6 +23,7 @@ class AlgorithmWindow(QDialog):
     def setup_connections(self):
         self.ui.m_close_button.clicked.connect(self.cancel_button_clicked)
         self.ui.m_run_algorithm_button.clicked.connect(self.run_algorithm_button_clicked)
+        self.ui.m_exportResultButton.clicked.connect(self.slot_export_result_log)
 
     def cancel_button_clicked(self):
         self.close()
@@ -47,3 +49,7 @@ class AlgorithmWindow(QDialog):
     @pyqtSlot(str)
     def write_text(self,string):
         self.ui.m_textBrowser.setPlainText(string)
+
+    @pyqtSlot()
+    def slot_export_result_log(self):
+        ExportHelper.export_result_log(self.ui.m_textBrowser.toPlainText(),"algorithm")

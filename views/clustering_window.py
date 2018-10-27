@@ -6,6 +6,7 @@ from threading import Thread
 from time import sleep
 import json
 from helpers.dev_utils import resource_path
+from helpers.export_helper import ExportHelper
 
 class ClusteringWindow(AlgorithmWindow):
 
@@ -21,6 +22,7 @@ class ClusteringWindow(AlgorithmWindow):
         self.ui.m_run_algorithm_button.setEnabled(False)
         self.project.signal_update_bar.connect(self.slot_update_bar)
         self.project.signal_classification_algorithm_finished.connect(self.slot_project_has_finished)
+        self.ui.m_exportResultButton.setEnabled(False)
 
     def generate_params(self):
         data = {
@@ -57,7 +59,12 @@ class ClusteringWindow(AlgorithmWindow):
         self.project.signal_update_bar.disconnect(self.slot_update_bar)
         self.project.signal_classification_algorithm_finished.disconnect(self.slot_project_has_finished)
         self.ui.m_run_algorithm_button.setEnabled(True)
+        self.ui.m_exportResultButton.setEnabled(True)
 
     @pyqtSlot(int)
     def slot_update_bar(self,v):
         self.progress_dialog.setValue(v)
+
+    @pyqtSlot()
+    def slot_export_result_log(self):
+        ExportHelper.export_result_log(self.ui.m_textBrowser.toPlainText(), "clustering")

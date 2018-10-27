@@ -224,7 +224,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_3">
+          <widget class="QPushButton" name="m_exportResultButton">
            <property name="enabled">
             <bool>false</bool>
            </property>

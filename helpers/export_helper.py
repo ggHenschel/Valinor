@@ -8,6 +8,7 @@ class ExportHelper():
     def __init__(self):
         if self.this == None:
             self.this = self
+        return self.this
 
     @staticmethod
     def export_case_attribute_log(project,progress_dialog):
@@ -47,5 +48,17 @@ class ExportHelper():
         progress_dialog.show()
         project.export_case_attribute_log(file_path,progress_dialog,keep_legend_bool,delimiter)
         progress_dialog.close()
+
+        return True
+
+    @staticmethod
+    def export_result_log(result_log, type):
+        file_path, ok = QFileDialog.getSaveFileName(None, None, "Result_Log_for_"+type,
+                                                    options=QFileDialog.DontUseCustomDirectoryIcons,
+                                                    filter="Text file (*.txt)")
+        if not ok:
+            return False
+        with open(file_path,"w") as save_file:
+            save_file.write(result_log)
 
         return True
