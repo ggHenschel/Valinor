@@ -17,11 +17,16 @@ class ConformityWindow(QDialog):
 
     def initUI(self):
         self.ui = uic.loadUi(resource_path('conformity_dialog.ui'),self)
+        if self.ui.m_conformity_type.isChecked():
+            self.ui.m_type_options_group.setEnabled(True)
+        else:
+            self.ui.m_type_options_group.setEnabled(False)
 
     def setup_connections(self):
         self.ui.m_close_button.clicked.connect(self.cancel_button_clicked)
         self.ui.m_run_algorithm_button.clicked.connect(self.run_algorithm_button_clicked)
         self.ui.m_exportResultButton.clicked.connect(self.slot_export_result_log)
+        self.ui.m_conformity_type.clicked.connect(self.slot_type_export_cliked)
 
     def cancel_button_clicked(self):
         self.close()
@@ -52,6 +57,11 @@ class ConformityWindow(QDialog):
         elif self.ui.m_rb_ann_ignore.isChecked():
             data["notes"] = str("ignore")
 
+        if self.ui.m_rb_type_as_int.isChecked():
+            data["style"] = str("int")
+        else:
+            data["style"] = str("str")
+
         data["types"] = self.ui.m_conformity_type.isChecked()
         data["conformity"] = self.ui.m_conformity_export.isChecked()
         params = data
@@ -73,3 +83,10 @@ class ConformityWindow(QDialog):
     @pyqtSlot()
     def slot_export_result_log(self):
         ExportHelper.export_result_log(self.ui.m_textBrowser.toPlainText(),"conformity")
+
+    @pyqtSlot()
+    def slot_type_export_cliked(self):
+        if self.ui.m_conformity_type.isChecked():
+            self.ui.m_type_options_group.setEnabled(True)
+        else:
+            self.ui.m_type_options_group.setEnabled(False)

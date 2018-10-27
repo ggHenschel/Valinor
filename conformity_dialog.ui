@@ -50,8 +50,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>142</width>
-          <height>349</height>
+          <width>139</width>
+          <height>389</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -124,6 +124,41 @@ Types</string>
               </property>
               <property name="checked">
                <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="m_type_options_group">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="title">
+            <string>Type Options</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <widget class="QRadioButton" name="m_rb_type_as_int">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Set Type as Integer&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Type wil be [0,1,2,3,4,5,6,7]:&lt;/p&gt;&lt;p&gt;0 -  Conform&lt;/p&gt;&lt;p&gt;1 -  Non Conform: Inexistent Activity&lt;/p&gt;&lt;p&gt;2 -  Non Conform: Inexistent Transition&lt;/p&gt;&lt;p&gt;3 -  Non Conform: Inexistent Activity and Inexistent Transition&lt;/p&gt;&lt;p&gt;4 -  Non Conform: Transition with Innapropriate Duration&lt;/p&gt;&lt;p&gt;5 -  Non Conform: Transition with Innapropriate Duration and  Inexistent Activity&lt;/p&gt;&lt;p&gt;6 -  Non Conform: Transition with Innapropriate Duration and Inexistent Transition&lt;/p&gt;&lt;p&gt;7 -  Non Conform: Transition with Innapropriate Duration,  Inexistent Activity and Inexistent Transition&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Type As Integer</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="m_rb_type_as_str">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Set Type as String&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Type wil be One of the Following:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Conform&lt;li&gt;Non Conform: Inexistent Activity&lt;li&gt;Non Conform: Inexistent Transition&lt;li&gt; Non Conform: Inexistent Activity and Inexistent Transition&lt;li&gt;Non Conform: Transition with Innapropriate Duration&lt;li&gt; Non Conform: Transition with Innapropriate Duration and Inexistent Activity&lt;li&gt;Non Conform: Transition with Innapropriate Duration and Inexistent Transition&lt;li&gt;Non Conform: Transition with Innapropriate Duration, Inexistent Activity and Inexistent Transition&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Type as String</string>
               </property>
              </widget>
             </item>

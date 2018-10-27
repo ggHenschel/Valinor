@@ -111,8 +111,36 @@ class ProjectModel(QObject):
                 liste.append(item[1])
                 string += str(item[1])+"\t"
             if parameters["types"]:
-                liste.append(item[2])
-                string += str(item[2])+"\t"
+                if parameters["style"] == "int":
+                    liste.append(item[2])
+                    string += str(item[2]) + "\t"
+                else:
+                    if item[2] == 0:
+                        liste.append("Conform")
+                        string +=format("%110s"%"Conform")
+                    elif item[2] == 1:
+                        liste.append("Non Conform: Inexistent Activity")
+                        string +=format("%110s"%"Non Conform: Inexistent Activity")
+                    elif item[2] == 2:
+                        liste.append("Non Conform: Inexistent Transition")
+                        string +=format("%110s"%"Non Conform: Inexistent Transition")
+                    elif item[2] == 3:
+                        liste.append("Non Conform: Inexistent Activity and Inexistent Transition")
+                        string +=format("%110s"%"Non Conform: Inexistent Activity and Inexistent Transition")
+                    elif item[2] == 4:
+                        liste.append("Non Conform: Transition with Innapropriate Duration")
+                        string +=format("%110s"%"Non Conform: Transition with Innapropriate Duration")
+                    elif item[2] == 5:
+                        liste.append("Non Conform: Transition with Innapropriate Duration and Inexistent Activity")
+                        string += format("%110s" % "Non Conform: Transition with Innapropriate Duration and Inexistent Activity")
+                    elif item[2] == 6:
+                        liste.append("Non Conform: Transition with Innapropriate Duration and Inexistent Transition")
+                        string += format("%110s" % "Non Conform: Transition with Innapropriate Duration and Inexistent Transition")
+                    elif item[2] == 7:
+                        liste.append("Non Conform: Transition with Innapropriate Duration, Inexistent Activity and Inexistent Transition")
+                        string += format("%110s" % "Non Conform: Transition with Innapropriate Duration, Inexistent Activity and Inexistent Transition")
+
+
             if parameters["notes"]=="add":
                 liste.append(str(item[3]))
             if parameters["notes"]!="ignore":
